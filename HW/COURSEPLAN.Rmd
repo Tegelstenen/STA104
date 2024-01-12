@@ -1,0 +1,355 @@
+---
+title: "Home Work 4 — STA104"
+author: "Filip Wilhelm Sjostrand"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+# P1: Exercises 1 141/142
+
+```{r message=FALSE}
+# Packages ---------
+library(dplyr)
+library(ggplot2)
+
+# Data ----------
+treat1 <- c(250, 50, 80, 55, 188)
+treat2 <- c(240, 48, 72, 47, 230)
+diff <- treat1-treat2
+absidff <- abs(diff)
+
+# Permutation
+permutation <- c(1:32)
+
+pair1 <- 
+  c(rep(absidff[1],32)) *
+  c(1,1,1,1,1, -1, 1,1,1, -1, 1,1, -1, 1, -1,-1, 1,1,1,1, -1,-1,-1,-1,-1,-1, 1, -1,-1,-1,-1,-1)
+
+pair2 <-  
+  c(rep(absidff[2],32)) *
+  c(1,1,1,1, -1, 1,1,1, -1, 1,1, -1, 1, -1, 1, -1, 1, -1,-1,-1, 1,1,1, -1,-1,-1,-1, 1, -1,-1,-1,-1 )
+  
+pair3 <- 
+  c(rep(absidff[3],32)) *
+  c(1,1,1, -1, 1,1,1, -1, 1,1, -1, 1,1, -1,-1, 1, -1, 1, -1,-1, 1, -1,-1, 1,1, -1,-1,-1, 1, -1,-1, -1)
+
+pair4 <- 
+  c(rep(absidff[4],32)) *
+  c(1,1, -1, 1,1,1, -1, 1,1,1, -1,-1,-1, 1,1,1, -1,-1, 1, -1,-1, 1, -1, 1, -1, 1,1 -1,-1,-1, 1, -1,-1)
+
+pair5 <- 
+  c(rep(absidff[5],32)) *
+  c(1, -1, 1,1,1,1, -1,-1,-1,-1, 1,1,1,1,1,1, -1,-1,-1, 1, -1,-1, 1, -1, 1,1, -1,-1,-1,-1, 1, -1)
+
+# Table
+df <- data.frame(permutation, pair1, pair2, pair3, pair4, pair5)
+
+df <- df %>%
+  mutate(mean=(pair1+pair2+pair3+pair4+pair5)/5)
+```
+
+\newpage
+
+`r knitr::kable(df)`
+
+\newpage
+
+```{r echo=FALSE, message=FALSE}
+# Data ---------
+absdiff_rank <- rank(abs(diff))
+absdiff_rank_obs <- c()
+for(i in 1:length(absdiff_rank)){
+  if(diff[i] < 0){
+    absdiff_rank_obs[i] <- absdiff_rank[i]*(-1)
+  }
+}
+
+# Permutation --------
+pair1 <- 
+  c(rep(absdiff_rank[1],32)) *
+  c(1,1,1,1,1, -1, 1,1,1, -1, 1,1, -1, 1, -1,-1, 1,1,1,1, -1,-1,-1,-1,-1,-1, 1, -1,-1,-1,-1,-1)
+
+pair2 <-  
+  c(rep(absdiff_rank[2],32)) *
+  c(1,1,1,1, -1, 1,1,1, -1, 1,1, -1, 1, -1, 1, -1, 1, -1,-1,-1, 1,1,1, -1,-1,-1,-1, 1, -1,-1,-1,-1 )
+  
+pair3 <- 
+  c(rep(absdiff_rank[3],32)) *
+  c(1,1,1, -1, 1,1,1, -1, 1,1, -1, 1,1, -1,-1, 1, -1, 1, -1,-1, 1, -1,-1, 1,1, -1,-1,-1, 1, -1,-1, -1)
+
+pair4 <- 
+  c(rep(absdiff_rank[4],32)) *
+  c(1,1, -1, 1,1,1, -1, 1,1,1, -1,-1,-1, 1,1,1, -1,-1, 1, -1,-1, 1, -1, 1, -1, 1,1 -1,-1,-1, 1, -1,-1)
+
+pair5 <- 
+  c(rep(absdiff_rank[5],32)) *
+  c(1, -1, 1,1,1,1, -1,-1,-1,-1, 1,1,1,1,1,1, -1,-1,-1, 1, -1,-1, 1, -1, 1,1, -1,-1,-1,-1, 1, -1)
+
+# Table ---------
+df <- data.frame(permutation, pair1, pair2, pair3, pair4, pair5)
+
+df <- df %>%
+  mutate(`SR+`=(pair1+pair2+pair3+pair4+pair5)/5)
+```
+
+`r knitr::kable(df)`
+
+\newpage
+
+# P2: Exercise 4 on page 142
+
+```{r message=FALSE}
+# Data ----------
+df <- data.frame(
+  subject=c(1,2,3,4,5,6,7,8),
+  before=c(89, 90, 87, 98, 120, 85, 97, 110),
+  after=c(76, 101, 84, 86, 105, 84, 93, 115)
+)
+
+# Wilcox signed-rank test ----------
+pvalW <- wilcox.test(df$before, df$after, alternative='two.sided', paired=TRUE)$p.value
+
+# Normal approximation ---------
+n <- nrow(df)
+diff <- df$before-df$after
+abs_diff_rank <- rank(abs(diff))
+signed <- c()
+for(i in 1:n){
+ if(diff[i]<0){
+   signed[i] <- abs_diff_rank[i]*(-1)
+ } 
+  else{
+    signed[i] <- abs_diff_rank[i]
+  }
+}
+
+
+SR <- sum(signed[signed>0])
+E_SR <- (n*(n+1))/4
+VAR_SR <- (n*(n+1)*(2*n+1))/24
+Z <- (SR - E_SR)/sqrt(VAR_SR)
+
+pvalZ <- 2*pnorm(Z, lower.tail = FALSE)
+```
+The p-value of the Wilcoxon Signed-rank test is `r pvalW` and from the normal approximation it is `r round(pvalZ, 2)`. In either case, there is an insignificant difference between LDH before and after fasting.
+
+\newpage
+
+# P3: Exercises 1 and 2 on page 189
+
+```{r message=FALSE}
+# Data ---------
+height <- c(57, 65, 70, 78)
+weight <- c(120, 145, 153, 162)
+model_obs <- lm(weight~height)
+slope_obs <- model_obs$coefficients[2]
+spear_obs <- cor(height, weight, method="spearman")
+tau_obs <- cor(height, weight, method="kendall")
+
+# Permutation
+perm_y <- combinat::permn(c(120, 145, 153, 162))
+perm_y_df <- as.data.frame(perm_y)
+colnames(perm_y_df) <- c(1:24)
+perm_y_df <- as.data.frame(t(perm_y_df))
+colnames(perm_y_df) <- c("y1", "y2", "y3", "y4")
+
+
+slopes <- c()
+spearman <- c()
+tau <- c()
+
+for(i in 1:length(perm_y)){
+  slopes[i] <- lm(unlist(perm_y[i])~height)$coefficients[2]
+  spearman[i] <- cor(height, unlist(perm_y[i]), method="spearman")
+  tau[i] <- cor(height, unlist(perm_y[i]), method="kendall")
+}
+
+perm_y_df <- perm_y_df %>% 
+  cbind(slopes, spearman, tau) %>%
+  arrange(desc(slopes))
+
+row.names(perm_y_df)[row.names(perm_y_df)==1] <- "Observed"
+
+```
+
+\newpage
+
+`r knitr::kable(perm_y_df, caption="x1=57, x2=65, x3=70, x4=78")`
+
+\newpage
+
+# P4: Exercise 3 on page 189
+
+## a)
+
+```{r message=FALSE}
+# Data ---------
+age <- c(3, 7, 15, 24, 85, 180, 300, 360)
+strength <- c(2500, 3200, 4100, 5300, 6100, 6500, 6650, 6750)
+df <- data.frame(age, strength)
+
+# Associations ----------
+pearson <- cor(age, strength, method="pearson")
+spearman <- cor(age, strength, method="spearman")
+tau <- cor(age, strength, method="kendall")
+table <- data.frame(pearson, spearman, tau)
+
+# Visualize
+df %>%
+  ggplot(aes(age, strength)) +
+  geom_point()
+```
+
+`r knitr::kable(table)`
+
+## b)
+
+```{r message=FALSE}
+# Test for bivariate normal -----------
+BIV <- mvnormtest::mshapiro.test(t(as.matrix(df))) # FTR
+```
+
+Since the data is neither Bivariate normal or of a larger size we will rely on permutation.
+
+```{r message=FALSE}
+# Permutation
+n <- nrow(df)
+perm_y <- combinat::permn(strength)
+perm_y_df <- as.data.frame(perm_y)
+colnames(perm_y_df) <- c(1:factorial(n))
+perm_y_df <- as.data.frame(t(perm_y_df))
+colnames(perm_y_df) <- c("y1", "y2", "y3", "y4", "y5", "y6", "y7", "y8")
+
+pearsons <- c()
+spearmans <- c()
+taus <- c()
+
+for(i in 1:length(perm_y)){
+  pearsons[i] <- cor(age, unlist(perm_y[i]), method="pearson")
+  spearmans[i] <- cor(age, unlist(perm_y[i]), method="spearman")
+  taus[i] <- cor(age, unlist(perm_y[i]), method="kendall")
+}
+
+perm_y_df <- 
+  perm_y_df %>% 
+  cbind(pearsons, spearmans, taus)
+
+row.names(perm_y_df)[perm_y_df$pearsons==pearson] <- "Observed"
+```
+
+`r knitr::kable(head(perm_y_df %>% select(-y1,-y2,-y3,-y4,-y5,-y6,-y7,-y8), 10), caption="Head of Permutation")`
+
+### Pearson & Spearman
+
+$H_0:$ $\rho = 0$ VS $H_a:$ $\rho \ne 0$
+
+### Tau
+$H_0:$ $\tau = 0$ VS $H_a:$ $\tau \ne 0$
+
+### Result
+
+Using either we derive the same permutation p-value of $\frac{1}{`r factorial(n)`}=`r 1/factorial(n)`$
+
+Hence, in every case, thew association is significantly different from 0.
+
+\newpage
+
+# P5: Exercise 7 on page 190
+
+```{r message=FALSE}
+# Data ----------
+df <- data.frame(c(4,7), c(3,2))
+df <- df %>% 
+  rbind(c(11, 5)) %>%
+  cbind(c(7, 9, 16))
+colnames(df) <- c("Nearby", "Not Nearby", "Row Totals")
+rownames(df) <- c("Low", "High", "Column Totals")
+
+# Fishers Exact test -----------
+fisher <- function(xmax, ndot1, ndot2, ndotdot, n1dot, xobs){
+  P <-  c()
+  j <- 1
+  for(i in 0:xmax){
+    P[j] <- (choose(ndot1, i) * choose(ndot2, n1dot-i))/choose(ndotdot, n1dot)
+    j=j+1
+  }
+  lowtail <- sum(P[1:(xobs+1)])
+  uptail <- sum(P[(xobs+1):(length(P))])
+  P <- c(lowtail, uptail)
+  P <- append(P,2*min(P))
+  return(P)
+}
+
+pval_twotail <- fisher(7,df[3,1], df[3,2], df[3,3], df[1,3], 4)[1]
+
+```
+
+
+The p-value is `r pval_twotail`. Thus for a left-tail test, there is insufficient evidence that there is a significant association.
+
+\newpage
+
+# P6: Exercise 12 on page 192
+
+## a)
+
+$H_0:$ $P_{MadeMiss} = P_{MissMade}$ VS. $H_a:$ $P_{MadeMiss} \ne P_{MissMade}$
+
+$\alpha = 0.05$
+
+```{r message=FALSE}
+# Data ----------
+df <- data.frame(c(5,14), c(3,8))
+colnames(df) <- c("Missed second", "Made second")
+rownames(df) <- c("Missed first", "Made first")
+madeMiss <- df[2,1]
+missMade <- df[1,2]
+Tn <- ((madeMiss-missMade)**2)/(madeMiss+missMade)
+p <- 2*pchisq(Tn,1, lower.tail = FALSE)
+
+
+```
+
+With a p-value of `r p`, we reject $H_0$. Thus, there is sufficient evidence that there is significance difference in the probability of making the first shot and making the second shot.
+
+## b)
+
+$H_0:$ $p_{ij} = p_{i.}p_{.j}$ $\forall (i,j)$ VS. $H_a:$ $p_{ij} \ne p_{i.}P_{.j}$
+
+```{r message=FALSE}
+# Unpair ---------
+missed <- c(df[1,1]+df[2,1], df[1,1]+df[1,2])
+made <- c(df[1,2]+df[2,2], df[2,1]+df[2,2])
+unpair <- data.frame(missed,made)
+
+# Permutation ----------
+obs <- chisq.test(as.matrix(unpair), simulate.p.value = TRUE)$statistic
+tot <- 10000
+mats <- list()
+p <- c()
+
+for (i in 1:tot){
+  mat <- matrix(nrow=2, ncol=2)
+  mat[1,1] <- sample(0:30, 1)
+  mat[1,2] <- 30-mat[1,1]
+  if(mat[1,1]==0){                # X11=0
+    mat[2,1] <- sample(1:30, 1)  
+  } else if(mat[1,2]==0){         # X12=0
+    mat[2,1] <- sample(0:29, 1)
+  } else{
+    mat[2,1] <- sample(0:30, 1)
+  }
+  mat[2,2] <- 30-mat[2,1]
+  mat
+  if(any(sapply(mats, identical, y=mat))){
+  }else{
+    res <- as.numeric(chisq.test(mat, simulate.p.value = TRUE)$statistic)
+    p <- append(p, ((res >= obs)+0))
+    mats <- append(mats, list(mat))
+  }
+}
+
+pval <- sum(p)/tot
+```
+
+The p-value from the permutation is `r pval`,  and therefore we reject $H_0$. Thus, there is sufficient evidence that there is an association between making first shot and making the second shot. Comparing this value to the one from a), we see that they are approximately the same. However, the chi-square test assume independence, but since we are getting the data from paired data this is a violated.

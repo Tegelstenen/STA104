@@ -1,0 +1,22 @@
+```{r}
+library(ggplot2)
+library(dplyr)
+
+Y1 <- c(28, 26, 31, 27, 35)
+Y2 <-  c(34, 29, 25, 31, 29)
+Y3 <- c(31, 25, 27, 29, 28)
+
+# Sample size in each groups
+n1 = length(Y1); n2 = length(Y2); n3 = length(Y3);
+
+# create data frame for this data
+df <- data.frame("color"=rep(c(1, 2, 3), c(n1, n2, n3)) , "resp"= c(Y1, Y2, Y3))
+
+# Visualize
+df %>%
+  ggplot() +
+  geom_point(aes(x=color, y=resp)) +
+  xlab("Color (1=Blue, 2=Green, 3=Orange)") +
+  ylab("Responses")
+```
+

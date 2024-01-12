@@ -1,0 +1,157 @@
+---
+output:
+  pdf_document: default
+  word_document: default
+indent: yes
+---
+
+**One:**
+
+pval $\sum_{k=B}^n$ $n \choose k$ $(p^k)(1-p)^{n-k}$
+
+$\frac{a-np}{\sqrt{np(1-p)}}=-z_{(1-\alpha/2)}$ ner
+
+$\frac{b-1-np}{\sqrt{np(1-p)}}=z_{(1-\alpha/2)}$ upp
+
+CLT power alpha=0.05
+
+$1-\Phi(1.645-\frac{\mu_{true} - \mu_{0}}{\sigma/\sqrt{n}})$
+
+BIN power:
+
+$1-\Phi(1.645\sqrt{\frac{.25}{p(1-p)}}-\frac{p-.5}{\sqrt{p(1-p)/n}})$  
+  
+**Two:**
+1. calculate $D_{obs} = \bar{X_i} - \bar{X_j}$
+2. From $N$ randomly allocate values to $n_i$ and $n_j$ 
+3. for each permut calc $D^*$
+4. upper pvalue
+
+$U=mn-W+\frac{m(m+1)}{2}$
+
+normAP $P(z \ge \frac{W_1-\frac{1}{2}m(N+1)}{\sqrt{\frac{1}{12}mn(N+1)}})$
+
+$var(W_{tie}) = \frac{mn(N+1)}{12} - \frac{mn\sum_i^k{(t_i^3 - t_i)}}{12N(N-1)}$ dont forget to square
+
+1.$X_i - X_j$ and order
+
+2.Find $k_a$ & $k_b$ s.th. $P(k_a \le U \le k_b-1) = 1-\alpha$ $\Rightarrow$ $pwd(k_a) \le \Delta \le pwd(k_b)$
+
+3.Small m & n $k_a = l+1$ $k_b = u$
+
+SCORES
+
+KS: rank, if in treatment add $1/n_{group}$, find all abs diff per value.
+
+
+**k:**
+
+reject if $|\frac{\sqrt{2}\hat{D_i}}{\sqrt{MSE(\frac{1}{n_i}+\frac{1}{n_j})}}|>q(1-\alpha;k;N-k)$
+
+$all = \frac{N!}{n_1!n_2!...n_k!}$
+
+$KW = \frac{12}{N(N+1)}\sum_{i}^k{n_i(\bar{R_i}-\frac{N+1}{2})^2 }$
+
+$KW_{tie} = \frac{KW}{1-\frac{\sum(t_i^3-t_i)}{N^3-N}}$
+
+$KW_{large} \sim \chi^2_{k-1}$
+
+lsd
+1. obs $T_{ij}$
+2. perm by selecting $n_i$ $n_j$ from N
+3. $T_{ij}$ from each
+4. $100\alpha$ point of permutaiton distirbution $=t^*(\alpha)$, reject if $T_{ij} > t^*(\alpha)$
+
+HSD
+1. obs $|T_{ij}|=\frac{|\bar{R_i} - \bar{R_j}|}{\sqrt{\frac{MSE}{2}(\frac{1}{n_i}+\frac{1}{n_j})}}$
+2. perm as F, calc $Q^*=max_{ij}|T_{ij}|$
+3.let $q^*(\alpha)$ be upper $\alpha^{th}$ quantile
+4.signif $|T_{ij}| > q^*(\alpha)$
+5. pval but with >
+
+$|\bar{R_i} - \bar{R_j}| \ge q(\alpha, k, \infty)\sqrt{\frac{N(N+1)}{24}(\frac{1}{n_i}+\frac{1}{n_j})}$ Z for LSD, and Z alpha/g for bon with LSD
+
+
+**Paired:**
+
+$H_0:$ $F(x) = 1-F(-x)$ $H_a:$ $F(x) < 1-F(-x)$, $F(x) > 1-F(-x)$
+
+perm
+1. for all $2^n$ perm, comp $D_i$
+2. all possible assingment of +,-
+3. find $\bar{D}$
+4. pval as usual
+
+perm for lare n
+
+$\bar{D} = \frac{\sum{U_i|D_i|}}{n}$  $P(U_i=1) = P(U_i=-1) =.5$
+
+normAP
+
+$z=\frac{\bar{D}}{\sqrt{\frac{1}{n^2} \sum{|D_i|^2}}}$
+
+$z=\frac{SR_+ - \frac{n(n+1)}{4}}{\sqrt{\frac{n(n+1)(2n+1)}{24}}}$
+
+$z_{tie,no0}=\frac{SR_+ - \frac{1}{2}\sum{}R_i}{\sqrt{\frac{1}{4}\sum{R_i^2}}}$
+
+sign test: 
+
+$H_0:$ $\theta_D = 0$ $H_a:$ $\theta_D > 0$ 
+
+**Trend:**
+
+1. r_obs
+2. fix x, perm n! for y
+3. calc r
+4. pval as usaul
+
+$z=r\sqrt{n-1}$
+
+$$D = \sum{[R(X_i) - R(Y_i)]^2}$$
+
+$$r_s = 1 - \frac{6D}{n(n^2-1)}$$
+
+$$r_{s,tie} = \frac{1 - \frac{6D}{n(n^2-1)}-C_1}{C_2}$$
+
+
+$$C_1 = \frac{\sum{(s_i^3 - s_i)} + \sum{(t_i^3 - t_i)}}{2n(n^2-1)}$$
+
+$$ C_2 = \sqrt{[1- \frac{\sum{(s_i^3 - s_i)}}{n(n^2-1)}][1- \frac{\sum{(t_i^3 - t_i)}}{n(n^2-1)}]}$$
+
+tau
+
+1. $U_{ij}=1_{conc}$ $=1/2$ if tie
+2. $V_i=\sum{U_{ij}}$ for that pair 
+3. $r_{\tau} = 2\frac{\sum^{n-1}_{i}{V_i}}{_nC_2}-1$
+
+normap
+$z = r_{\tau}3\sqrt{\frac{n^2-n}{4n+10}}$
+
+slope
+
+$$ \hat{\beta_1} = r\frac{S_Y}{S_X}$$ $$\hat{\beta_0} = \bar{Y} - \hat{\beta_1}\bar{X}$$
+
+$t = \hat{\beta_1}\sqrt{\frac{\sum{(X_i - \bar{X})^2}}{MSE}}$
+
+1.obs
+2.fix X, n! for Y
+3. p as usual
+
+$H_0:$ $p_{ij} = p_{i.}p_{.j}$ $V(i,j)$ vs $H_a:$ $p_{ij} \ne p_{i.}p_{.j}$
+
+$e_{ij} = \frac{n_{i.}n_{.j}}{n_{..}}$
+
+$\chi^2=\sum_i^r{\sum_j^c{\frac{(n_{ij}-e_{ij})^2}{e_{ij}}}} \sim \chi^2_{(r-1)(c-1)}$ if $e_{ij}<5$ $/Rightarrow$ fix margins and randomize. if A - 2, two sample with $_{(n_{1.}+n_{2.})}C_{n_{1.}}$
+
+Fisher exact
+
+$P(X=x)=\frac{ _{(n_{.1})}C_{(x)} * _{(n_{.2})}C_{(n_{1.}-x)} } {_{n_{..}}C_{n_{1.}}}$
+
+mcnemar
+$P_{AB} = P_{BA}$ vs $P_{AB} \ne P_{BA}$
+
+large n:
+$T=\frac{(X_{AB}-X_{BA})^2}{X_{AB}+X_{BA}}\sim\chi_1^2$
+
+small:
+$X_{AB}\sim Bin(X_{AB}+X_{BA}, 1/2)$
